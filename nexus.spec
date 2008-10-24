@@ -64,8 +64,8 @@ cp -a %{name}-webapp-%{version}/runtime/apps/nexus $RPM_BUILD_ROOT%{_datadir}/ne
 ln -s %{_sharedstatedir}/nexus/conf $RPM_BUILD_ROOT%{_sysconfdir}/nexus
 
 %pre
-%groupadd -g 200 nexus
-%useradd -u 200 -d %{_sharedstatedir}/nexus -s /bin/false -c "nexus user" -g nexus nexus
+%groupadd -g 201 nexus
+%useradd -u 201 -d %{_sharedstatedir}/nexus -s /bin/false -c "nexus user" -g nexus nexus
 
 %post
 /sbin/chkconfig --add nexus
