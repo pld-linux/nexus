@@ -48,9 +48,9 @@ artifact in your organization from a single location.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{init.d,sysconfig},%{_javadir},%{_datadir},%{_sharedstatedir}/nexus/conf}
+install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,sysconfig},%{_javadir},%{_datadir},%{_sharedstatedir}/nexus/conf}
 
-install %SOURCE1 $RPM_BUILD_ROOT%{_sysconfdir}/init.d/nexus
+install %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/nexus
 install %SOURCE2 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/plexus.properties
 install %SOURCE3 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/classworlds.conf
 install %SOURCE4 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/wrapper.conf
