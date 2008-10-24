@@ -1,6 +1,6 @@
 #
 %include	/usr/lib/rpm/macros.java
-Summary:	-
+Summary:	Maven Repository Manager
 Name:		nexus
 Version:	1.0.2
 Release:	0.1
@@ -16,23 +16,32 @@ URL:		http://nexus.sonatype.org/
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.300
-Requires(post,preun):   /sbin/chkconfig
-Requires(postun):       /usr/sbin/groupdel
-Requires(postun):       /usr/sbin/userdel
-Requires(pre):  /bin/id
-Requires(pre):  /usr/bin/getgid
-Requires(pre):  /usr/sbin/groupadd
-Requires(pre):  /usr/sbin/useradd
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 # We do need exactly 3.2.3 version (it is tagged as JSW_3_2)
 Requires:	java-service-wrapper = 3.2.3
 Requires:	jpackage-utils
-Provides:       group(nexus)
-Requires:       rc-scripts
-Provides:       user(nexus)
+Requires:	rc-scripts
+Provides:	group(nexus)
+Provides:	user(nexus)
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
+Nexus is a powerful and robust Maven repository manager, created to
+provide reliable access to artifacts required for development and
+provisioning. Maven's central repository has always served as a great
+convenience for users of Maven, but it has always been recommended to
+maintain your own repositories to ensure stability within your
+organization. Nexus greatly simplifies the maintenance of your own
+internal repositories and access to external repositories. With Nexus
+you can completely control access to, and deployment of, every
+artifact in your organization from a single location.
 
 %prep
 %setup -q -c
@@ -81,7 +90,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 
-%attr(755,root,root) %{_sysconfdir}/init.d/nexus
+%attr(754,root,root) /etc/rc.d/init.d/nexus
 
 %{_sysconfdir}/nexus
 
