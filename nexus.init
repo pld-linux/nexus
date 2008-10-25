@@ -3,11 +3,14 @@
 # nexus		Maven Repository Manager
 #
 # chkconfig:	345 85 15
+#
 # description:	Maven Repository Manager
+#
 # processname:	nexus
-# pidfile:	/var/lib/nexus/nexus.pid
+# pidfile:	/var/run/nexus/nexus.pid
 # config:	/etc/nexus/wrapper.conf
-
+#
+# $Id$
 
 # Source function library
 . /etc/rc.d/init.d/functions
@@ -29,9 +32,10 @@ else
 fi
 
 start() {
+	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/nexus ]; then
 		msg_starting nexus
-		su nexus -s /bin/sh -c "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.daemonize=TRUE wrapper.pidfile=/var/lib/nexus/nexus.pid"
+		daemon --user nexus "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.pidfile=/var/run/nexus/nexus.pid wrapper.daemonize=TRUE"
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/nexus
 	else
@@ -41,9 +45,10 @@ start() {
 
 stop() {
 	if [ -f /var/lock/subsys/nexus ]; then
+		# Stop daemons.
 		msg_stopping nexus
-		killproc nexus
-		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
+		killproc --pidfile /var/run/nexus/nexus.pid nexus
+		rm -f /var/lock/subsys/nexus
 	else
 		msg_not_running nexus
 	fi
@@ -68,10 +73,9 @@ case "$1" in
   console)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/nexus ]; then
-		msg_starting nexus
 		touch /var/lock/subsys/nexus
-		su nexus -s /bin/sh -c "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.pidfile=/var/lib/nexus/nexus.pid"
-		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
+		su nexus -s /bin/sh -c "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.pidfile=/var/run/nexus/nexus.pid"
+		rm -f /var/lock/subsys/nexus
 	else
 		msg_already_running nexus
 	fi
