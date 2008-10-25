@@ -28,11 +28,7 @@ else
 	exit 0
 fi
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start)
-	# Check if the service is already running?
+start() {
 	if [ ! -f /var/lock/subsys/nexus ]; then
 		msg_starting nexus
 		su nexus -s /bin/sh -c "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.daemonize=TRUE wrapper.pidfile=/var/lib/nexus/nexus.pid"
@@ -41,6 +37,33 @@ case "$1" in
 	else
 		msg_already_running nexus
 	fi
+}
+
+stop() {
+	if [ -f /var/lock/subsys/nexus ]; then
+		msg_stopping nexus
+		killproc nexus
+		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
+	else
+		msg_not_running nexus
+	fi
+}
+
+condrestart() {
+	if [ -f /var/lock/subsys/nexus ]; then
+		stop
+		start
+	else
+		msg_not_running nexus
+		RETVAL=$1
+	fi
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
 	;;
   console)
 	# Check if the service is already running?
@@ -54,26 +77,24 @@ case "$1" in
 	fi
 	;;
   stop)
-	# Stop daemons.
-	if [ -f /var/lock/subsys/nexus ]; then
-		msg_stopping nexus
-		killproc nexus
-		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
-	else
-		msg_not_running nexus
-	fi
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
 	;;
   status)
 	status nexus
 	exit $?
 	;;
-  restart|force-reload)
-	$0 stop
-	$0 start
-	exit $?
-	;;
   *)
-	msg_usage "$0 {start|console|stop|restart|force-reload|status}"
+	msg_usage "$0 {start|console|stop|restart|try-restart|force-reload|status}"
 	exit 3
 esac
 
