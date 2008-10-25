@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# proftpd	Maven Repository Manager
+# nexus		Maven Repository Manager
 #
 # chkconfig:	345 85 15
 # description:	Maven Repository Manager
@@ -55,7 +55,7 @@ case "$1" in
 	;;
   stop)
 	# Stop daemons.
-	if [ -f /var/lock/subsys/proftpd ]; then
+	if [ -f /var/lock/subsys/nexus ]; then
 		msg_stopping nexus
 		killproc nexus
 		rm -f /var/lock/subsys/nexus /var/run/nexus.pid > /dev/null 2>&1
