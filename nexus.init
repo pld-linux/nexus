@@ -5,7 +5,7 @@
 # chkconfig:	345 85 15
 # description:	Maven Repository Manager
 # processname:	nexus
-# pidfile:	/var/run/nexus.pid
+# pidfile:	/var/lib/nexus/nexus.pid
 # config:	/etc/nexus/wrapper.conf
 
 
@@ -48,7 +48,7 @@ case "$1" in
 		msg_starting nexus
 		touch /var/lock/subsys/nexus
 		su nexus -s /bin/sh -c "/usr/sbin/java-service-wrapper /var/lib/nexus/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.pidfile=/var/lib/nexus/nexus.pid"
-		rm -f /var/lock/subsys/nexus /var/run/nexus.pid > /dev/null 2>&1
+		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
 	else
 		msg_already_running nexus
 	fi
@@ -58,7 +58,7 @@ case "$1" in
 	if [ -f /var/lock/subsys/nexus ]; then
 		msg_stopping nexus
 		killproc nexus
-		rm -f /var/lock/subsys/nexus /var/run/nexus.pid > /dev/null 2>&1
+		rm -f /var/lock/subsys/nexus /var/lib/nexus/nexus.pid > /dev/null 2>&1
 	else
 		msg_not_running nexus
 	fi
