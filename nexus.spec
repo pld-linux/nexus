@@ -48,7 +48,7 @@ artifact in your organization from a single location.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,sysconfig},%{_javadir},%{_datadir},%{_sharedstatedir}/nexus/conf}
+install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,sysconfig},%{_javadir},%{_datadir},%{_sharedstatedir}/nexus/conf,/var/run/nexus}
 
 install %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/nexus
 install %SOURCE2 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/plexus.properties
@@ -99,9 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %{_datadir}/nexus
 
-%dir %attr(770,nexus,nexus) %{_sharedstatedir}/nexus
-%dir %attr(770,nexus,nexus) %{_sharedstatedir}/nexus/conf
+%attr(770,nexus,nexus) %dir %{_sharedstatedir}/nexus
+%attr(770,nexus,nexus) %dir %{_sharedstatedir}/nexus/conf
 %attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/plexus.properties
 %attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/plexus.xml
 %attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/classworlds.conf
 %attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/wrapper.conf
+%attr(775,nexus,nexus) %dir /var/run/nexus
