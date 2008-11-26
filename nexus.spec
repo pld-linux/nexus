@@ -1,13 +1,15 @@
-#
+
+%define	plexus_ver	1.6.4
+
 %include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
-Version:	1.0.2
+Version:	1.1.1
 Release:	0.1
 License:	GPL v3
 Group:		Networking/Daemons/Java
 Source0:	http://nexus.sonatype.org/downloads/%{name}-%{version}-bundle.tar.gz
-# Source0-md5:	f9980d7d3a2ebf12e409d49e093839e7
+# Source0-md5:	73b243157f09c6166b622c440c29d925
 Source1:	%{name}.init
 Source2:	%{name}-plexus.properties
 Source3:	%{name}-classworlds.conf
@@ -56,8 +58,8 @@ install %SOURCE3 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/classworlds.conf
 install %SOURCE4 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/wrapper.conf
 install %{name}-webapp-%{version}/conf/plexus.xml $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/plexus.xml
 
-cp -a %{name}-webapp-%{version}/lib/plexus-platform-jsw-1.5.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw-1.5.jar
-ln -s plexus-platform-jsw-1.5.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw.jar
+cp -a %{name}-webapp-%{version}/lib/plexus-platform-jsw-%{plexus_ver}.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw-%{plexus_ver}.jar
+ln -s plexus-platform-jsw-%{plexus_ver}.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw.jar
 
 cp -a %{name}-webapp-%{version}/runtime/apps/nexus $RPM_BUILD_ROOT%{_datadir}/nexus
 
@@ -94,7 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %{_sysconfdir}/nexus
 
-%{_javadir}/plexus-platform-jsw-1.5.jar
+%{_javadir}/plexus-platform-jsw-%{plexus_ver}.jar
 %{_javadir}/plexus-platform-jsw.jar
 
 %{_datadir}/nexus
