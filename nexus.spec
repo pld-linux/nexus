@@ -1,15 +1,15 @@
 
-%define	plexus_ver	1.6.4
+%define	plexus_ver	1.6.4.1
 
 %include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
-Version:	1.1.1
+Version:	1.2.1
 Release:	0.1
 License:	GPL v3
 Group:		Networking/Daemons/Java
-Source0:	http://nexus.sonatype.org/downloads/%{name}-%{version}-bundle.tar.gz
-# Source0-md5:	73b243157f09c6166b622c440c29d925
+Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}-bundle.tar.gz
+# Source0-md5:	608be3bc450b17a8529da9b604184f6f
 Source1:	%{name}.init
 Source2:	%{name}-plexus.properties
 Source3:	%{name}-classworlds.conf
