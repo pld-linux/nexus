@@ -1,36 +1,22 @@
 
-%define	plexus_ver	1.6.4.1
-
 %include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
-Version:	1.2.1
+Version:	1.3.6
 Release:	0.1
 License:	GPL v3
 Group:		Networking/Daemons/Java
-Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}-bundle.tar.gz
-# Source0-md5:	608be3bc450b17a8529da9b604184f6f
-Source1:	%{name}.init
+Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
+# Source0-md5:	1eec39a389ff86931237e00a5861bd2c
+Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
-Source3:	%{name}-classworlds.conf
-Source4:	%{name}-wrapper.conf
 URL:		http://nexus.sonatype.org/
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.300
-Requires(post,preun):	/sbin/chkconfig
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(pre):	/bin/id
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/usr/sbin/groupadd
-Requires(pre):	/usr/sbin/useradd
-# We do need exactly 3.2.3 version (it is tagged as JSW_3_2)
-Requires:	java-service-wrapper = 3.2.3
+Requires:	group(servlet)
 Requires:	jpackage-utils
 Requires:	rc-scripts
-Provides:	group(nexus)
-Provides:	user(nexus)
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -50,41 +36,17 @@ artifact in your organization from a single location.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,sysconfig},%{_javadir},%{_datadir},%{_sharedstatedir}/nexus/conf,/var/run/nexus}
 
-install %SOURCE1 $RPM_BUILD_ROOT/etc/rc.d/init.d/nexus
-install %SOURCE2 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/plexus.properties
-install %SOURCE3 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/classworlds.conf
-install %SOURCE4 $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/wrapper.conf
-install %{name}-webapp-%{version}/conf/plexus.xml $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/plexus.xml
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,%{_sharedstatedir}/{nexus,tomcat/conf/Catalina/localhost}}
+#install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
+install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
 
-cp -a %{name}-webapp-%{version}/lib/plexus-platform-jsw-%{plexus_ver}.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw-%{plexus_ver}.jar
-ln -s plexus-platform-jsw-%{plexus_ver}.jar $RPM_BUILD_ROOT%{_javadir}/plexus-platform-jsw.jar
+cp -a . $RPM_BUILD_ROOT%{_datadir}/nexus
 
-cp -a %{name}-webapp-%{version}/runtime/apps/nexus $RPM_BUILD_ROOT%{_datadir}/nexus
-
-ln -s %{_sharedstatedir}/nexus/conf $RPM_BUILD_ROOT%{_sysconfdir}/nexus
-
-%pre
-%groupadd -g 201 nexus
-%useradd -u 201 -d %{_sharedstatedir}/nexus -s /bin/false -c "nexus user" -g nexus nexus
-
-%post
-/sbin/chkconfig --add nexus
-%service nexus restart "nexus daemon"
-
-%preun
-if [ "$1" = "0" ]; then
-	%service nexus stop
-	/sbin/chkconfig --del nexus
-fi
-
-%postun
-if [ "$1" = "0" ]; then
-	%userremove nexus
-	%groupremove nexus
-fi
-
+mv $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/web.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
+ln -sf %{_datadir}/nexus/WEB-INF/web.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
+ln -sf %{_datadir}/nexus/WEB-INF/plexus.properties $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -92,19 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 
-%attr(754,root,root) /etc/rc.d/init.d/nexus
+%attr(770,root,servlet) %{_datadir}/nexus
+%attr(770,root,servlet) %{_sharedstatedir}/nexus
 
-%{_sysconfdir}/nexus
-
-%{_javadir}/plexus-platform-jsw-%{plexus_ver}.jar
-%{_javadir}/plexus-platform-jsw.jar
-
-%{_datadir}/nexus
-
-%attr(770,nexus,nexus) %dir %{_sharedstatedir}/nexus
-%attr(770,nexus,nexus) %dir %{_sharedstatedir}/nexus/conf
-%attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/plexus.properties
-%attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/plexus.xml
-%attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/classworlds.conf
-%attr(660,nexus,nexus) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/wrapper.conf
-%attr(775,nexus,nexus) %dir /var/run/nexus
+%dir %{_sysconfdir}/nexus
+%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
+%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/web.xml
+%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
