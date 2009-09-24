@@ -38,10 +38,11 @@ artifact in your organization from a single location.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,%{_sharedstatedir}/{nexus,tomcat/conf/Catalina/localhost}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,/var/log/nexus,%{_sharedstatedir}/{nexus,tomcat/conf/Catalina/localhost}}
 #install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
+install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/log4j.properties
 
 cp -a . $RPM_BUILD_ROOT%{_datadir}/nexus
 
