@@ -10,6 +10,7 @@ Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
 # Source0-md5:	1eec39a389ff86931237e00a5861bd2c
 Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
+Source3:	%{name}-log4j.properties
 URL:		http://nexus.sonatype.org/
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
@@ -45,8 +46,9 @@ install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
 cp -a . $RPM_BUILD_ROOT%{_datadir}/nexus
 
 mv $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/web.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
-ln -sf %{_datadir}/nexus/WEB-INF/web.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
-ln -sf %{_datadir}/nexus/WEB-INF/plexus.properties $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
+ln -sf %{_sysconfdir}/nexus/web.xml $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/web.xml
+ln -sf %{_sysconfdir}/nexus/plexus.properties $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/plexus.properties
+ln -sf %{_sysconfdir}/nexus/log4j.properties  $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/log4j.properties
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -56,8 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(770,root,servlet) %{_datadir}/nexus
 %attr(770,root,servlet) %{_sharedstatedir}/nexus
+%attr(770,root,servlet) /var/log/nexus
 
 %dir %{_sysconfdir}/nexus
-%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
+%attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/log4j.properties
+%attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/web.xml
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
