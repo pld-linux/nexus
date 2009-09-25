@@ -3,7 +3,7 @@
 Summary:	Maven Repository Manager
 Name:		nexus
 Version:	1.3.6
-Release:	0.1
+Release:	1
 License:	GPL v3
 Group:		Networking/Daemons/Java
 Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
