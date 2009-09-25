@@ -10,7 +10,6 @@ Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
 # Source0-md5:	1eec39a389ff86931237e00a5861bd2c
 Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
-Source3:	%{name}-log4j.properties
 URL:		http://nexus.sonatype.org/
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
@@ -38,18 +37,29 @@ artifact in your organization from a single location.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,/var/log/nexus,%{_sharedstatedir}/{nexus,tomcat/conf/Catalina/localhost}}
-#install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,/var/log/nexus,%{_sharedstatedir}/{nexus/conf,tomcat/conf/Catalina/localhost}}
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
-install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/log4j.properties
 
 cp -a . $RPM_BUILD_ROOT%{_datadir}/nexus
 
 mv $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/web.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/web.xml
 ln -sf %{_sysconfdir}/nexus/web.xml $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/web.xml
 ln -sf %{_sysconfdir}/nexus/plexus.properties $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/plexus.properties
-ln -sf %{_sysconfdir}/nexus/log4j.properties  $RPM_BUILD_ROOT%{_datadir}/nexus/WEB-INF/log4j.properties
+
+# These files are configs, but they should be created by nexus. So lets
+# install them as %%ghost %%config, and link to /etc/nexus
+touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/log4j.properties
+touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/nexus.xml
+touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/security.xml
+touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/lvo-plugin.xml
+ln -sf %{_sharedstatedir}/nexus/conf/log4j.properties $RPM_BUILD_ROOT%{_sysconfdir}/nexus/log4j.properties
+ln -sf %{_sharedstatedir}/nexus/conf/nexus.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/nexus.xml
+ln -sf %{_sharedstatedir}/nexus/conf/security.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/security.xml
+ln -sf %{_sharedstatedir}/nexus/conf/lvo-plugin.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/lvo-plugin.xml
+
+# log directory
+ln -s /var/log/nexus $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/logs
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -58,11 +68,22 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 
 %attr(770,root,servlet) %{_datadir}/nexus
-%attr(770,root,servlet) %{_sharedstatedir}/nexus
+%dir %attr(770,root,servlet) %{_sharedstatedir}/nexus
+%dir %attr(770,root,servlet) %{_sharedstatedir}/nexus/logs
+%dir %attr(770,root,servlet) %{_sharedstatedir}/nexus/conf
 %attr(770,root,servlet) /var/log/nexus
 
 %dir %{_sysconfdir}/nexus
-%attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/log4j.properties
 %attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/web.xml
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
+
+# These files are created by nexus, but they are config files.
+%ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/log4j.properties
+%ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/nexus.xml
+%ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security.xml
+%ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/lvo-plugin.xml
+%{_sysconfdir}/nexus/log4j.properties
+%{_sysconfdir}/nexus/nexus.xml
+%{_sysconfdir}/nexus/security.xml
+%{_sysconfdir}/nexus/lvo-plugin.xml
