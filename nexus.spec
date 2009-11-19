@@ -2,12 +2,12 @@
 %include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
-Version:	1.3.6
+Version:	1.4.0
 Release:	1
 License:	GPL v3
 Group:		Networking/Daemons/Java
 Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
-# Source0-md5:	1eec39a389ff86931237e00a5861bd2c
+# Source0-md5:	b81e1e133da61f463892195969a5c858
 Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
 URL:		http://nexus.sonatype.org/
