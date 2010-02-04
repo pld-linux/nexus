@@ -11,7 +11,6 @@ Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
 Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
 URL:		http://nexus.sonatype.org/
-BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.300
 Requires:	group(servlet)
