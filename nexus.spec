@@ -37,7 +37,8 @@ artifact in your organization from a single location.
 rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,/var/log/nexus,%{_sharedstatedir}/{nexus/conf,tomcat/conf/Catalina/localhost}}
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/tomcat-context.xml
+ln -sf %{_sysconfdir}/%{name}/tomcat-context.xml $RPM_BUILD_ROOT%{_tomcatconfdir}/%{name}.xml
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
 
 cp -a . $RPM_BUILD_ROOT%{_datadir}/nexus
@@ -75,7 +76,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/nexus
 %attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/web.xml
-%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
+%attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/tomcat-context.xml
+%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
 
 # These files are created by nexus, but they are config files.
 %ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/log4j.properties
