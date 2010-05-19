@@ -15,7 +15,7 @@
    -
    - If you don't need access control at all, you can disable it in
    - /etc/nexus/security-configuration.xml file.
-  --!>
+  -->
 <security>
   <version>2.0.3</version>
   <users>
