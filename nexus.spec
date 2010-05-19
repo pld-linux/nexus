@@ -85,8 +85,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
 
 # These file must be writeable, that is why it goes to /var
-%config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security-configuration.xml
-%config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security.xml
+%attr(640,tomcat,tomcat) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security-configuration.xml
+%attr(640,tomcat,tomcat) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security.xml
 %{_sysconfdir}/nexus/security-configuration.xml
 %{_sysconfdir}/nexus/security.xml
 
