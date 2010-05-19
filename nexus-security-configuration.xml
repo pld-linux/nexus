@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<security-configuration>
+	<version>2.0.3</version>
+	<!-- Set it to false if you don't need access control. Be aware that
+	   - everey one will have administration permission.
+	   - you can set/change admin password in /etc/nexus/security.xml file.
+	  -->
+	<enabled>true</enabled>
+	<anonymousAccessEnabled>true</anonymousAccessEnabled>
+	<anonymousUsername>anonymous</anonymousUsername>
+	<anonymousPassword>{n82LaatUK/QHQGehaowoiRTBlQRTcc1ZY24vBb+5bLo=}</anonymousPassword>
+	<realms>
+		<realm>XmlAuthenticatingRealm</realm>
+		<realm>XmlAuthorizingRealm</realm>
+	</realms>
+</security-configuration>

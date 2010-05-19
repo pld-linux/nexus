@@ -3,19 +3,21 @@
 Summary:	Maven Repository Manager
 Name:		nexus
 Version:	1.6.0
-Release:	1
+Release:	2
 License:	GPL v3
 Group:		Networking/Daemons/Java
 Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
 # Source0-md5:	248a3c3b2253aa834ccae69237499572
 Source1:	%{name}-context.xml
 Source2:	%{name}-plexus.properties
+Source3:	%{name}-security-configuration.xml
+Source4:	%{name}-security.xml
 URL:		http://nexus.sonatype.org/
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.300
-Requires:	group(servlet)
 Requires:	jpackage-utils
 Requires:	rc-scripts
+Requires:	tomcat
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -51,12 +53,15 @@ ln -sf %{_sysconfdir}/nexus/plexus.properties $RPM_BUILD_ROOT%{_datadir}/nexus/W
 # install them as %%ghost %%config, and link to /etc/nexus
 touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/log4j.properties
 touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/nexus.xml
-touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/security.xml
 touch $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/lvo-plugin.xml
 ln -sf %{_sharedstatedir}/nexus/conf/log4j.properties $RPM_BUILD_ROOT%{_sysconfdir}/nexus/log4j.properties
 ln -sf %{_sharedstatedir}/nexus/conf/nexus.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/nexus.xml
-ln -sf %{_sharedstatedir}/nexus/conf/security.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/security.xml
 ln -sf %{_sharedstatedir}/nexus/conf/lvo-plugin.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/lvo-plugin.xml
+
+install %{SOURCE3} $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/security-configuration.xml
+install %{SOURCE4} $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/conf/security.xml
+ln -sf %{_sharedstatedir}/nexus/conf/security-configuration.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/security-configuration.xml
+ln -sf %{_sharedstatedir}/nexus/conf/security.xml $RPM_BUILD_ROOT%{_sysconfdir}/nexus/security.xml
 
 # log directory
 ln -s /var/log/nexus $RPM_BUILD_ROOT%{_sharedstatedir}/nexus/logs
@@ -79,12 +84,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/tomcat-context.xml
 %{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
 
+# These file must be writeable, that is why it goes to /var
+%config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security-configuration.xml
+%config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security.xml
+%{_sysconfdir}/nexus/security-configuration.xml
+%{_sysconfdir}/nexus/security.xml
+
 # These files are created by nexus, but they are config files.
 %ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/log4j.properties
 %ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/nexus.xml
-%ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security.xml
 %ghost %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/lvo-plugin.xml
 %{_sysconfdir}/nexus/log4j.properties
 %{_sysconfdir}/nexus/nexus.xml
-%{_sysconfdir}/nexus/security.xml
 %{_sysconfdir}/nexus/lvo-plugin.xml
