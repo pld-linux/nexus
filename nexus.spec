@@ -1,9 +1,8 @@
-
 %include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
 Version:	1.7.0
-Release:	2
+Release:	3
 License:	GPL v3
 Group:		Networking/Daemons/Java
 Source0:	http://nexus.sonatype.org/downloads/%{name}-webapp-%{version}.war
@@ -38,7 +37,7 @@ artifact in your organization from a single location.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,/var/log/nexus,%{_sharedstatedir}/{nexus/conf,tomcat/conf/Catalina/localhost}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/nexus,%{_datadir}/nexus,%{_tomcatconfdir},/var/log/nexus,%{_sharedstatedir}/{nexus/conf,tomcat/conf/Catalina/localhost}}
 install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/tomcat-context.xml
 ln -sf %{_sysconfdir}/%{name}/tomcat-context.xml $RPM_BUILD_ROOT%{_tomcatconfdir}/%{name}.xml
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/nexus/plexus.properties
@@ -82,7 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/plexus.properties
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/web.xml
 %attr(660,root,servlet) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/nexus/tomcat-context.xml
-%{_sharedstatedir}/tomcat/conf/Catalina/localhost/nexus.xml
+%{_tomcatconfdir}/nexus.xml
 
 # These file must be writeable, that is why it goes to /var
 %attr(640,tomcat,tomcat) %config(noreplace) %verify(not md5 mtime size) %{_sharedstatedir}/nexus/conf/security-configuration.xml
