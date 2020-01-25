@@ -1,4 +1,3 @@
-%include	/usr/lib/rpm/macros.java
 Summary:	Maven Repository Manager
 Name:		nexus
 Version:	1.7.0
